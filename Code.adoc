@@ -1,3 +1,7 @@
+[source, cpp]
+
+----
+
 #include <iostream> // for std:: cout
 #include "rccregisters.hpp" // for RCC
 #include "gpioaregisters.hpp" // for GPIOA
@@ -65,6 +69,8 @@ int main()
 
   return 1;
 }
+
+----
 
 == Пример выполнения
 
