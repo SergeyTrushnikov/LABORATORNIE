@@ -322,79 +322,137 @@ image::UML.jpg[]
 [mermaid]
 ----
 %%{init: {'theme': 'default', 'themeVariables': {
-  'primaryColor': '#fff',
+  'fontSize': '16px',
   'primaryBorderColor': '#000',
-  'primaryTextColor': '#000',
   'lineColor': '#000',
-  'fontSize': '20px'
+  'edgeLabelBackground': '#fff'
 }}}%%
 
 classDiagram
-    class UserButton {
-        <<Кнопка пользователя>>
-        +WasPressed()
-        +WatchPressed()
+    direction TB
+    
+    %% Интерфейсы
+    class IButton {
+        <<interface>>
+        +Press()
+        +Release(IButton)
     }
     
-    class ModeController {
-        <<Контроллер режимов>>
-        +SwitchMode()
-        +RunCurrentMode()
+    class ILedToggable {
+        <<interface>>
+        +Toggle()
     }
     
-    class CommonMode {
-        <<Базовый класс режимов>>
-        +Init()
-        +Execute()
-    }
-    
-    class RunningLightMode {
-        <<Бегущий огонёк>>
-        +Execute()
-    }
-    
-    class FaceGlowMode {
-        <<Синхронное моргание>>
-        +Execute()
-    }
-    
-    class ChessMode {
-        <<Шахматный порядок>>
-        +Execute()
-    }
-    
-    class Load {
-        <<Светодиод>>
-        +Logo(e)
-        +Off()
-    }
-    
-    class OptimizedLeal {
-        <<Оптимизированный светодиод>>
-        +Logo(e)
-    }
-    
-    class LeadOnOff {
-        <<Интерфейс включения/выключения>>
+    class ILedOnOff {
+        <<interface>>
         +On()
         +Off()
     }
     
-    class HeadToggleble {
-        <<Интерфейс переключения>>
-        +Logo(e)
+    class IMode {
+        <<interface>>
+        +Execute()
     }
     
-    %% СВЯЗИ
-    UserButton <.. ModeController : проверяет состояние
-    ModeController *-- CommonMode : управляет
+    %% Основные классы
+    class Bluetooth {
+        <<Android>>
+        Bluetooth(Android)
+        a.huromicrosofibus(c)
+    }
+    
+    class MacKController {
+        -mModes : IMode[]
+        -mCurrentMode : uint32_t
+        +MacKController(modes: const IMode[])
+        +RunCurrentMode()
+    }
+    
+    class UniButton {
+        -pinNumber : uint32_t
+        -registerAddress : uint32_t
+        +UniButton(pinNum: uint32_t, registerAddress: uint32_t)
+        +WasPressed() bool
+    }
+    
+    class CommonMode {
+        <<abstract>>
+        -mLeds : const ILedToggable[]
+        -mLedsOnOff : const ILedOnOff[]
+        -mCurrentIndex : uint32_t
+        +CommonMode(leds: const ILedToggable[], ledsOnOff: const ILedOnOff[])
+        +Execute()
+    }
+    
+    class RunningLightMode {
+        +RunningLightMode(leds: const ILedToggable[], ledsOnOff: const ILedOnOff[])
+        +Execute()
+    }
+    
+    class FadeGlowMode {
+        +FadeGlowMode(leds: const ILedToggable[], ledsOnOff: const ILedOnOff[])
+        +Execute()
+    }
+    
+    class ChessMode {
+        -phase : bool = false
+        +ChessMode(leds: const ILedToggable[], ledsOnOff: const ILedOnOff[])
+        +Execute()
+    }
+    
+    class Led {
+        -pinNumber : uint32_t
+        -registerAddress : uint32_t*
+        +Led(pinNum: uint32_t, registerAddress: uint32_t)
+        +Toggle()
+        +On()
+        +Off()
+    }
+    
+    class OptimizedLed {
+        -registerAddress : uint32_t const
+        -pinNumber : uint32_t
+        +OptimizedLed(registerAddress: uint32_t const, pinNumber: uint32_t)
+        +Toggle()
+        +On()
+        +Off()
+    }
+    
+    %% Наследование
+    IButton <|-- UniButton
+    IButton <|-- Bluetooth
+    IMode <|-- CommonMode
     CommonMode <|-- RunningLightMode
-    CommonMode <|-- FaceGlowMode  
+    CommonMode <|-- FadeGlowMode
     CommonMode <|-- ChessMode
-    CommonMode o-- Load : управляет
-    CommonMode o-- OptimizedLeal : управляет
-    CommonMode o-- LeadOnOff : использует
-    CommonMode o-- HeadToggleble : использует
+    ILedToggable <|.. Led
+    ILedOnOff <|.. Led
+    ILedToggable <|.. OptimizedLed
+    ILedOnOff <|.. OptimizedLed
+    
+    %% Композиция и агрегация
+    MacKController "1" *-- "*" IMode : содержит
+    CommonMode "1" *-- "*" ILedToggable : управляет светодиодами
+    CommonMode "1" *-- "*" ILedOnOff : управляет включением/выключением
+    
+    %% Зависимости
+    MacKController ..> UniButton : использует
+    MacKController ..> Bluetooth : использует
+    
+    %% Стилизация
+    style IButton fill:#f0f8ff,stroke:#1e90ff
+    style IMode fill:#f0f8ff,stroke:#1e90ff
+    style ILedToggable fill:#f0f8ff,stroke:#1e90ff
+    style ILedOnOff fill:#f0f8ff,stroke:#1e90ff
+    style Bluetooth fill:#e6f7ff,stroke:#1890ff
+    style MacKController fill:#f6ffed,stroke:#52c41a
+    style UniButton fill:#fff7e6,stroke:#fa8c16
+    style CommonMode fill:#fff0f6,stroke:#eb2f96
+    style RunningLightMode fill:#f9f0ff,stroke:#722ed1
+    style FadeGlowMode fill:#f9f0ff,stroke:#722ed1
+    style ChessMode fill:#f9f0ff,stroke:#722ed1
+    style Led fill:#fcffe6,stroke:#7cb305
+    style OptimizedLed fill:#e6fffb,stroke:#13c2c2
 ----
 
 == Заключение
