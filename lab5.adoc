@@ -455,7 +455,7 @@ classDiagram
     style Led fill:#fcffe6,stroke:#7cb305
     style OptimizedLed fill:#e6fffb,stroke:#13c2c2
 ----
-Рисунок 2. UML - диаграмма
+Диаграмма 1. UML - диаграмма
 
 == Заключение
 
