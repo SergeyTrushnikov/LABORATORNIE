@@ -318,6 +318,7 @@ mModes[mCurrentMode]->Execute();
 Диаграмма отражает применение принципов SOLID, особенно разделения интерфейсов и открытости/закрытости.
 
 image::UML.jpg[]
+Рисунок 1. UML - диаграмма
 
 [mermaid]
 ----
@@ -454,6 +455,7 @@ classDiagram
     style Led fill:#fcffe6,stroke:#7cb305
     style OptimizedLed fill:#e6fffb,stroke:#13c2c2
 ----
+Рисунок 2. UML - диаграмма
 
 == Заключение
 
@@ -472,7 +474,7 @@ classDiagram
 === Пример работы программы
 
 image::shahmatka.jpg[]
-
+Рисунок 3. Пример работы
 
 === Полный код программы
 
