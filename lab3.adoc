@@ -45,7 +45,7 @@ image:Figure5.jpg[]
 
 4.Пишем Summary. 
 
-5.Делаем Commit и загружаем Pull в ветку на гите.
+5.Делаем Commit и загружаем Push в ветку на гите.
 
 image:Figure6.jpg[]
 [.text-center]
